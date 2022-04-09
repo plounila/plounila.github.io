@@ -1,0 +1,67 @@
+<script>
+    const respawnTimes = [
+        1795,
+        1790,
+        1780,
+        1770,
+        1755,
+        1740,
+        1720,
+        1700
+    ]
+    var timerEnabled = null;
+    var timeRemaining = 30*60;
+    function getFormattedTime(timeValue) {
+        minutes = Math.floor(timeValue/60);
+        seconds = Math.round(timeValue-(minutes*60));
+        paddedSeconds = `${seconds}`.padStart(2, '0')
+        return `${minutes}:${paddedSeconds}`
+    }
+    function timerThing() {
+        if (timeRemaining >= 0) {
+            timeRemaining -= 1;
+            document.getElementById("time").innerHTML = getFormattedTime(timeRemaining);
+            nextRespawns();
+        } else {
+            stopTimer();
+        }
+    }
+    function startTimer() {
+        timerEnabled = setInterval(timerThing, 1000)
+    }
+    function stopTimer() {
+        clearInterval(timerEnabled)
+    }
+    function toggleTimer() {
+        if (timerEnabled) {
+            stopTimer();
+            document.getElementById("timerbutton").innerHTML = "Toggle Timer ON";
+            timerEnabled = null;
+        } else {
+            nextRespawns();
+            startTimer();
+            document.getElementById("timerbutton").innerHTML = "Toggle Timer OFF";
+        }
+    }
+    function setTimer(value) {
+        timeRemaining = value;
+        document.getElementById("time").innerHTML = getFormattedTime(timeRemaining);
+    }
+    function nextRespawns() {
+        var upcoming = respawnTimes.filter((value) => value < timeRemaining).slice(0, 3);
+        times = upcoming.map((value) => getFormattedTime(value)).reduce((prev, curr) => `${prev}</br>${curr}`, "");
+        document.getElementById("respawns").innerHTML = times;
+    }
+</script>
+<html>
+    <head>
+        <title>test</title>
+    </head>
+    <body>
+        <p id="time">30:00</p>
+        <button id="timerbutton" onclick="toggleTimer()">Toggle Timer ON</button>
+        <button onclick="setTimer(30*60)">Reset Timer</button>
+        <p>Respawns</p>
+        <p id="respawns"></p>
+    </body>
+</html>
